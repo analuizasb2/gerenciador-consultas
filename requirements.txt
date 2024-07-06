@@ -1,0 +1,4 @@
+Flask
+flask-openapi3
+flask-cors
+pydantic
