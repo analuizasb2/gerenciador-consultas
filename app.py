@@ -93,17 +93,16 @@ def get_appointments(query: GetPatientSchedulePath):
     response_json = response.json()
 
     appointments_patient = [appointment for appointment in response_json if appointment['patient_id'] == query.patient_id]
-    print(appointments_patient)
 
     return jsonify({
             "appointments": appointments_patient
         }), 200
 
-class DeleteAppointmentPath(BaseModel):
+class AppointmentIdPath(BaseModel):
     id: int
 
 @app.delete('/agendamento', tags=[agendamentos_tag])
-def delete_appointment(query: DeleteAppointmentPath):
+def delete_appointment(query: AppointmentIdPath):
     """Cancelar agendamento.
     """
     
@@ -113,6 +112,30 @@ def delete_appointment(query: DeleteAppointmentPath):
         return jsonify({"error": "Erro ao cancelar agendamento"}), 500
 
     return jsonify({"message": "Agendamento cancelado com sucesso"}), 200
+    
+@app.put('/agendamento', tags=[agendamentos_tag])
+def update_appointment(query: AppointmentIdPath, body: PostSchedulePath):
+    """Atualizar agendamento.
+    """
+
+    slots_available = get_slots_available_doctor(body.doctor_id)
+    if not any(slot['start_time'] == body.start_time for slot in slots_available):
+        return jsonify({"error": "Este horário não está mais disponível para este médico."}), 400
+    
+    schedule_body = {
+        'start_time': body.start_time,
+        'doctor_id': body.doctor_id,
+        'patient_id': body.patient_id
+    }
+
+    try:
+        response = requests.put(f"{URL_SCHEDULER}?id={query.id}", json=schedule_body)        
+        if(response.status_code != 200):
+            return jsonify({"error": "Erro ao atualizar agendamento"}), 500        
+        return response.content, response.status_code, response.headers.items()
+    
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": f"Error calling scheduler API: {str(e)}"}), 500
 
 def get_slots_available_doctor(id):
     for doctor in doctors: 
