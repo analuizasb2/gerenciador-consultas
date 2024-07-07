@@ -12,7 +12,7 @@ load_dotenv()
 info = Info(title="Gerenciador de Consultas", version="1.0.0")
 app = OpenAPI(__name__, info=info)
 
-URL_SCHEDULER = "http://agendamento-consultas/agendamentos"
+URL_SCHEDULER = "http://agendamento-consultas:3000/agendamentos"
 API_KEY = os.getenv('API_KEY')
 
 url = f"https://api.mockaroo.com/api/generate.json?key={API_KEY}&schema=Doctor"

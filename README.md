@@ -14,6 +14,11 @@ O projeto consiste em um sistema de gerenciamento de consultas médicas. O siste
 ### Requisitos
 
 1. Ter o [Docker](https://docs.docker.com/engine/install/) instalado
+2. Adicionar um arquivo de nome `.env` na raiz do projeto com as seguintes variáveis de ambiente:
+```
+   API_KEY=<key-to-mockaroo>
+```
+Where <key-to-mockaroo> is the key to access the [Mockaroo](https://www.mockaroo.com/) API.
 
 ### Execução
 1. A partir da pasta raiz em um terminal como administrador, executar o comando abaixo para criar a imagem do Docker:
