@@ -1,6 +1,6 @@
 from flask import request, redirect, jsonify
 from flask_openapi3 import OpenAPI, Info, Tag
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 from datetime import datetime, timedelta
 import requests
 import os
@@ -56,10 +56,9 @@ class PostSchedulePath(BaseModel):
     doctor_id: int
     patient_id: int
     
-    @validator('start_time')
+    @field_validator('start_time')
     def check_start_time_format(cls, value):
         try:
-            # Attempt to parse the datetime to ensure it's in the correct format
             datetime.strptime(value, '%Y-%m-%d %H:%M')
         except ValueError:
             raise ValueError('start_time must be in the format YYYY-MM-DD HH:MM')
@@ -78,7 +77,7 @@ def schedule_appointment(body: PostSchedulePath):
 
     slots_available = get_slots_available_doctor(body.doctor_id)
     if not any(slot['start_time'] == body.start_time for slot in slots_available):
-        return jsonify({"error": "Este horário não está mais disponível"}), 400
+        return jsonify({"error": "Este horário não está disponível"}), 400
 
     try:
         response = requests.post(URL_SCHEDULER, json=schedule_body)
@@ -125,7 +124,7 @@ def update_appointment(query: AppointmentIdPath, body: PostSchedulePath):
 
     slots_available = get_slots_available_doctor(body.doctor_id)
     if not any(slot['start_time'] == body.start_time for slot in slots_available):
-        return jsonify({"error": "Este horário não está mais disponível para este médico."}), 400
+        return jsonify({"error": "Este horário não está disponível."}), 400
     
     schedule_body = {
         'start_time': body.start_time,
