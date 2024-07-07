@@ -3,12 +3,17 @@ from flask_openapi3 import OpenAPI, Info, Tag
 from pydantic import BaseModel, validator
 from datetime import datetime, timedelta
 import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 info = Info(title="Gerenciador de Consultas", version="1.0.0")
 app = OpenAPI(__name__, info=info)
 
-API_KEY = 'eb825640' # TODO: make this an env variable
-URL_SCHEDULER = "http://127.0.0.1:3000/agendamentos"
+URL_SCHEDULER = "http://agendamento-consultas/agendamentos"
+API_KEY = os.getenv('API_KEY')
 
 url = f"https://api.mockaroo.com/api/generate.json?key={API_KEY}&schema=Doctor"
 response = requests.get(url)

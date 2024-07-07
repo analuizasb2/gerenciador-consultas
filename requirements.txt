@@ -3,3 +3,4 @@ flask-openapi3
 flask-cors
 pydantic
 requests
+python-dotenv

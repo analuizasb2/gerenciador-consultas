@@ -1,0 +1,20 @@
+services:
+  gerenciador-consultas:
+    image: gerenciador-consultas
+    container_name: gerenciador-consultas
+    networks:
+      - consultas_network
+    ports:
+      - "5000:5000"
+
+  agendamento-consultas:
+    image: agendamento-consultas
+    container_name: agendamento-consultas
+    networks:
+      - consultas_network
+    ports:
+      - "3000:3000"
+
+networks:
+  consultas_network:
+    driver: bridge
