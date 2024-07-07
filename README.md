@@ -9,6 +9,11 @@ O projeto consiste em um sistema de gerenciamento de consultas médicas. O siste
 - Atualização de consultas existentes
 - Exclusão de consultas
 
+## Arquitetura
+Além da componente principal, que é a API deste repositório, o sistema é composto por um microsserviço de agendamento de consultas, que é responsável pela persistência de as consultas marcadas, e também se comunica com uma API externa de cadastro de médicos. A comunicação entre os microsserviços é feita por meio de requisições HTTP REST.
+
+![Diagrama com componentes do sistema gerenciador de consultas](gerenciador-consultas-diagrama.png)
+
 ## Execução com Docker
 
 ### Requisitos
@@ -18,15 +23,27 @@ O projeto consiste em um sistema de gerenciamento de consultas médicas. O siste
 ```
    API_KEY=<key-to-mockaroo>
 ```
-Where <key-to-mockaroo> is the key to access the [Mockaroo](https://www.mockaroo.com/) API.
+Onde <key-to-mockaroo> é a chave para acessar a API do [Mockaroo](https://www.mockaroo.com/) contendo os dados fictícios de médicos.
 
-### Execução
+### Execução - Opção 1: Executar somente esta API
 1. A partir da pasta raiz em um terminal como administrador, executar o comando abaixo para criar a imagem do Docker:
 
    `docker build -t gerenciador-consultas .`
 2. No mesmo terminal, executar o comando abaixo para executar o container:
 
    `docker run -p 5000:5000 gerenciador-consultas`
+
+### Execução - Opção 2: Executar esta API juntamente com o microsserviço [agendamento-consultas](https://github.com/analuizasb2/agendamento-consultas)
+1. A partir da pasta raiz do repositório [agendamento-consultas](https://github.com/analuizasb2/agendamento-consultas) um terminal como administrador, executar o comando abaixo para criar a imagem do Docker:
+
+   `docker build -t agendamento-consultas .`
+2. A partir da pasta raiz deste repositório em um terminal como administrador, executar o comando abaixo para criar a imagem do Docker:
+
+   `docker build -t gerenciador-consultas .`
+
+3. No mesmo terminal (deste repositório), executar o comando abaixo:
+
+   `docker-compose up`
 
 ## Execução sem Docker
 
@@ -36,6 +53,12 @@ Where <key-to-mockaroo> is the key to access the [Mockaroo](https://www.mockaroo
 2. Executar o comando abaixo para instalar as dependências:
 
    `pip install -r requirements.txt`
+
+3. Adicionar um arquivo de nome `.env` na raiz do projeto com as seguintes variáveis de ambiente:
+```
+   API_KEY=<key-to-mockaroo>
+```
+Onde <key-to-mockaroo> é a chave para acessar a API do [Mockaroo](https://www.mockaroo.com/) contendo os dados fictícios de médicos.
 
 ### Execução
 
